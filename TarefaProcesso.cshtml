@@ -1,0 +1,170 @@
+﻿@{
+    ViewSetup.SetDataFetcher("Projeto", "MapaDoProcesso");
+    ViewSetup.SetTargetArea("Content");
+    ViewSetup.SetViewKey("/Projeto");
+    ViewSetup.SetViewModel("~/js/ViewModels/TarefaMapaDoProcessoViewModel.js");
+}
+
+<div class="field-action">
+    <h2 data-bind="click: Configuracoes.Alternar">@_("Configurações")</h2>
+    <i data-bind="css: { 'icon-arrow-down-7': !Configuracoes.Visivel(), 'icon-arrow-up-6': Configuracoes.Visivel() }" class="icon-arrow-down-7"></i>
+</div >
+<div class="form-content bg-color-lighten" data-bind="verticalSlideVisible: Configuracoes.Visivel">
+    <label class="radio">
+        <input type="radio" name="TipoDePermissionamento" value="0" data-bind="checked: Configuracoes.TipoDePermissionamento" />
+        <span class="metro-radio">@_("Todos usuários podem visualizar o mapa")</span>
+    </label>
+
+    <label class="radio">
+        <input type="radio" name="TipoDePermissionamento" value="1" data-bind="checked: Configuracoes.TipoDePermissionamento" />
+        <span class="metro-radio">@_("Apenas alguns usuários podem visualizar o mapa")</span>
+    </label>
+
+    <div data-bind="visible: Configuracoes.TipoDePermissionamento() == 1 ? true : false">
+        <div style="display: inline-block">
+            <label>
+                <span class="field">
+                    <input type="text" style="width: 500px;" data-bind="kendoMultiSelect: Sinatra.Base.MultiAutoComplete(kendo.format('#/Empresa/ObterPessoasDaEmpresa/{0}', Sinatra.Utils.Details('#/Projeto').id), 'Nome', 'Id', Configuracoes.Pessoas, true)" />
+                </span>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="tarefa-mapa" class="map-area">
+    <ul id="map-source">
+        <li class="map-project map-item" data-bind="mapItem: { diagram: MapaDoProcesso(), source: '#map-source', destination: '#map-destination', action: Detalhes.Action }"></li>
+    </ul>
+    <div id="legend" class="pull-left">
+        <h4>Status da Tarefa</h4>
+        <div class="status" data-bind="foreach: Legendas">
+            <div class="index" data-bind="css: kendo.format('bg-color-{0}', $data.Color)"></div>
+            <span data-bind="text: $data.Title"></span>
+        </div>
+    </div>
+    <div id="map-destination"></div>
+</div>
+
+<div id="detalhes-processo" data-bind="kendoWindow: { isOpen: Detalhes.Visivel, title: 'Detalhes do Processo', visible: false, width: 720, height: 470, actions: ['Close'], modal: true, activate: function () { }, open: function () { this.center(); } }">
+    <p data-bind="html: Detalhes.Texto"></p>
+</div>
+
+
+<script type="text/html" id="tarefaTemplate">
+    <div>
+        <h4>#= NomeDoProjeto#</h4>
+        <table class="detalhesDoProcesso">
+            <thead>
+                <tr>
+                    <th colspan="6">#= Nome#</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>@_("Prioridade") </strong>
+                        <br />
+                        <span>#= Prioridade#</span>
+                    </td>
+                    <td>
+                        <strong>@_("Data Inicial") </strong>
+                        <br />
+                        <span>#= DataInicial#</span>
+                    </td>
+                    <td>
+                        <strong>@_("Data Final") </strong>
+                        <br />
+                        <span>#= DataFinal#</span>
+                    </td>
+                    <td>
+                        <strong>@_("Data de Finalização") </strong>
+                        <br />
+                        <span>#= DataDeFinalizacao#</span>
+                    </td>
+                    <td>
+                        <strong>@_("Prazo") </strong>
+                        <br />
+                        <span>#= Prazo#</span>
+                    </td>
+                    <td>
+                        <strong>@_("Status") </strong>
+                        <br />
+                        <span>#= Status#</span>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><strong>@_("Setor")</strong></td>
+                    <td colspan="5">#= Setor#</td>
+                </tr>
+                <tr>
+                    <td><strong>@_("Criador")</strong></td>
+                    <td colspan="5">#= Criador#</td>
+                </tr>
+                <tr>
+                    <td><strong>@_("Responsável")</strong></td>
+                    <td colspan="5">#= Pessoa#</td>
+                </tr>
+                <tr>
+                    <td><strong>@_("Finalização")</strong></td>
+                    <td colspan="5">#= Finalizador#</td>
+                </tr>
+                <tr>
+                    <td><strong>@_("Dependências")</strong></td>
+                    <td colspan="5">#= Dependencias# </td>
+                </tr>
+                <tr>
+                    <td><strong>@_("Descrição")</strong></td>
+                    <td colspan="5">#= Descricao# </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</script>
+
+
+<script type="text/html" id="projetoTemplate">
+    <div>
+        <table class="detalhesDoProcesso">
+            <thead>
+                <tr>
+                    <th colspan="3">#= Nome#</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>@_("Prioridade") </strong>
+                        <br />
+                        <span>#= Prioridade#</span>
+                    </td>
+                    <td>
+                        <strong>@_("Data Inicial") </strong>
+                        <br />
+                        <span>#= DataInicial#</span>
+                    </td>
+                    <td>
+                        <strong>@_("Data Final") </strong>
+                        <br />
+                        <span>#= DataFinal#</span>
+                    </td>
+
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><strong>@_("Criador")</strong></td>
+                    <td colspan="2">#= Criador#</td>
+                </tr>
+                <tr>
+                    <td><strong>@_("Descrição")</strong></td>
+                    <td colspan="2">#= Descricao#
+                    </td>
+                </tr>
+            </tfoot>
+
+        </table>
+
+    </div>
+</script>
